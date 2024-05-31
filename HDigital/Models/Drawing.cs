@@ -17,6 +17,7 @@ namespace HDigital.Models
         /*[DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]*/
         public DateTime DateAcquired { get; set; } 
+        /* */
 
         public string UltimaCultura { get; set; }
 
