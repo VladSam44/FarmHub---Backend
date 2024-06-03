@@ -16,8 +16,10 @@ namespace HDigital.Models
         public double Area { get; set; } 
         /*[DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]*/
-        public DateTime DateAcquired { get; set; } 
-        /* */
+        public DateTime DateAcquired { get; set; }
+        /* TEST*/
+        /* TEST2*/
+
 
         public string UltimaCultura { get; set; }
 
