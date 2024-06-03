@@ -69,15 +69,35 @@ namespace HDigital.Controllers
             return CreatedAtAction("GetVehicule", new { id = vehicule.Id }, vehicule);
         }
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVehicule(int id, Vehicule vehicule)
+        [HttpPut("update")]
+        public async Task<IActionResult> PutVehicule([FromBody]Vehicule updatedVehicule)
         {
-            if (id != vehicule.Id)
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaim = userIdentity.FindFirst("userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest();
+                return Unauthorized("Acces neautorizat");
             }
+            var existingVehicule = await _context.Vehicule.FindAsync(updatedVehicule.Id);
+            if (existingVehicule == null || existingVehicule.UserId != userId)
+            {
+                return NotFound("Vehiculul nu exista in baza de date/Acces neautorizat");
+            }
+            existingVehicule.Categorie = existingVehicule.Categorie;
+            existingVehicule.Brand = existingVehicule.Brand;
+            existingVehicule.Model = existingVehicule.Model;
+            existingVehicule.Putere = existingVehicule.Putere;
+            existingVehicule.OreFunctionare = existingVehicule.OreFunctionare;
+            existingVehicule.AnFabricatie  = existingVehicule.AnFabricatie;
+            existingVehicule.DataAchizitie = existingVehicule.DataAchizitie;
+            existingVehicule.PretAchizitie = existingVehicule.PretAchizitie;
+            existingVehicule.UltimaMentenanta = existingVehicule.UltimaMentenanta;
 
-            _context.Entry(vehicule).State = EntityState.Modified;
+
+
+
+
+
 
             try
             {
@@ -85,7 +105,7 @@ namespace HDigital.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VehiculeExist(id))
+                if (!VehiculeExist(updatedVehicule.Id))
                 {
                     return NotFound();
                 }
@@ -100,16 +120,23 @@ namespace HDigital.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicule(int id)
         {
-            var vehicule = await _context.Vehicule.FindAsync(id);
-            if (vehicule == null)
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaim = userIdentity.FindFirst("userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return NotFound();
+                return Unauthorized("Acces neautorizat.");
             }
-
+            var vehicule = await _context.Vehicule.FindAsync(id);
+            if (vehicule == null || vehicule.UserId != userId)
+            {
+                return NotFound("Angajatul nu este in data de baze");
+            }
             _context.Vehicule.Remove(vehicule);
             await _context.SaveChangesAsync();
 
             return NoContent();
+
+
         }
     }
 }

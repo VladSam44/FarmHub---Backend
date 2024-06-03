@@ -51,7 +51,8 @@ namespace HDigital.Controllers
 
             return transport;
         }
-        [HttpPost]
+        [Authorize]
+        [HttpPost("create")]
         public async Task<ActionResult<Transport>> PostTransport(Transport transport)
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
@@ -69,15 +70,32 @@ namespace HDigital.Controllers
             return CreatedAtAction("GetTransport", new { id = transport.Id }, transport);
         }
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTransport(int id, Transport transport)
+        [HttpPut("update")]
+        public async Task<IActionResult> PutTransport([FromBody]Transport updatedTransport)
         {
-            if (id != transport.Id)
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaim = userIdentity.FindFirst("userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest();
+                return Unauthorized("Acces neautorizat");
             }
+            var existingTransport = await _context.Transport.FindAsync(updatedTransport.Id);
+            if (existingTransport == null || existingTransport.UserId != userId)
+            {
+                return NotFound("Transportul nu exista in baza de date/Acces neautorizat");
+            }
+            existingTransport.Categorie = updatedTransport.Categorie;
+            existingTransport.Brand = updatedTransport.Brand;
+            existingTransport.Capacitate = updatedTransport.Capacitate;
+            existingTransport.UltimaMentenanta = updatedTransport.UltimaMentenanta;
+            existingTransport.TipAtasament = updatedTransport.TipAtasament;
+            existingTransport.AnFabricatie = updatedTransport.AnFabricatie;
+            existingTransport.DataAchizitie = updatedTransport.DataAchizitie;
+            existingTransport.PretAchizitie = updatedTransport.PretAchizitie;
 
-            _context.Entry(transport).State = EntityState.Modified;
+
+
+
 
             try
             {
@@ -85,7 +103,7 @@ namespace HDigital.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TransportExists(id))
+                if (!TransportExists(updatedTransport.Id))
                 {
                     return NotFound();
                 }
@@ -101,16 +119,22 @@ namespace HDigital.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTransport(int id)
         {
-            var transport = await _context.Transport.FindAsync(id);
-            if (transport == null)
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaim = userIdentity.FindFirst("userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return NotFound();
+                return Unauthorized("Acces neautorizat.");
             }
-
+            var transport = await _context.Transport.FindAsync(id);
+            if (transport == null || transport.UserId != userId)
+            {
+                return NotFound("Angajatul nu este in data de baze");
+            }
             _context.Transport.Remove(transport);
             await _context.SaveChangesAsync();
 
             return NoContent();
+
         }
     }
 }

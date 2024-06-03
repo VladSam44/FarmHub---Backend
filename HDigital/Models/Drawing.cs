@@ -13,9 +13,9 @@ namespace HDigital.Models
 
         public string StareTeren { get; set; } 
         public string TipCultura { get; set; } 
-        public double Area { get; set; } 
-        /*[DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]*/
+        public double Area { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateAcquired { get; set; }
         /* TEST*/
         /* TEST2*/

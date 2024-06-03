@@ -69,15 +69,31 @@ namespace HDigital.Controllers
             return CreatedAtAction("GetUtilaje", new { id = utilaje.Id }, utilaje);
         }
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUtilaje(int id, Utilaje utilaje)
+        [HttpPut("update")]
+        public async Task<IActionResult> PutUtilaje([FromBody]Utilaje updatedUtilaje)
         {
-            if (id != utilaje.Id)
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaim = userIdentity.FindFirst("userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest();
+                return Unauthorized("Acces neautorizat");
             }
+            var existingUtilaje = await _context.Utilaje.FindAsync(updatedUtilaje.Id);
+            if (existingUtilaje == null || existingUtilaje.UserId != userId)
+            {
+                return NotFound("Utilajul nu exista in baza de date/Acces neautorizat");
+            }
+            existingUtilaje.Categorie = updatedUtilaje.Categorie;
+            existingUtilaje.Brand = updatedUtilaje.Brand;
+            existingUtilaje.Model = updatedUtilaje.Model;
+            existingUtilaje.PutereNecesara = updatedUtilaje.PutereNecesara;
+            existingUtilaje.Greutate = updatedUtilaje.Greutate;
+            existingUtilaje.AnFabricatie = updatedUtilaje.AnFabricatie;
+            existingUtilaje.OreFunctionare = updatedUtilaje.OreFunctionare;
+            existingUtilaje.DataAchizitie = updatedUtilaje.DataAchizitie;
+            existingUtilaje.PretAchizitie = updatedUtilaje.PretAchizitie;
+            existingUtilaje.UltimaMentenanta = updatedUtilaje.UltimaMentenanta;
 
-            _context.Entry(utilaje).State = EntityState.Modified;
 
             try
             {
@@ -85,7 +101,7 @@ namespace HDigital.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UtilajeExist(id))
+                if (!UtilajeExist(updatedUtilaje.Id))
                 {
                     return NotFound();
                 }
@@ -101,16 +117,22 @@ namespace HDigital.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUtilaje(int id)
         {
-            var utilaje = await _context.Utilaje.FindAsync(id);
-            if (utilaje == null)
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var userIdClaim = userIdentity.FindFirst("userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return NotFound();
+                return Unauthorized("Acces neautorizat.");
             }
-
+            var utilaje = await _context.Utilaje.FindAsync(id);
+            if (utilaje == null || utilaje.UserId != userId)
+            {
+                return NotFound("Angajatul nu este in data de baze");
+            }
             _context.Utilaje.Remove(utilaje);
             await _context.SaveChangesAsync();
 
             return NoContent();
+
         }
     }
 }
