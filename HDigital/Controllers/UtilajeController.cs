@@ -23,7 +23,7 @@ namespace HDigital.Controllers
             return _context.Utilaje.Any(e => e.Id == id);
         }
         [Authorize]
-        [HttpGet]
+        [HttpGet("get")]
         public async Task<ActionResult<IEnumerable<Utilaje>>> GetUtilaje()
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
@@ -51,7 +51,7 @@ namespace HDigital.Controllers
 
             return utilaje;
         }
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Utilaje>> PostUtilaje(Utilaje utilaje)
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;

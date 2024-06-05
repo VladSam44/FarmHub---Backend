@@ -23,7 +23,7 @@ namespace HDigital.Controllers
             return _context.Transport.Any(e => e.Id == id);
         }
         [Authorize]
-        [HttpGet]
+        [HttpGet("get")]
         public async Task<ActionResult<IEnumerable<Transport>>> GetTransport()
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
