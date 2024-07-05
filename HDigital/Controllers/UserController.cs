@@ -227,6 +227,7 @@ namespace HDigital.Controllers
                     Message = "Email-ul nu exista"
                 });
             }
+
             var tokenBytes = RandomNumberGenerator.GetBytes(64);
             var emailToken = Convert.ToBase64String(tokenBytes);
             user.ResetPaswordToken = emailToken;

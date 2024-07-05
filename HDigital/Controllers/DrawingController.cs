@@ -31,7 +31,7 @@ namespace HDigital.Controllers
             var userIdClaim = userIdentity.FindFirst("userId");
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                return BadRequest("Unable to retrieve user ID.");
+                return BadRequest("Nu se poate prelua ID-ul utilizatorului.");
             }
             Console.WriteLine(userId);
             var drawings = await _context.Drawings
