@@ -28,6 +28,25 @@ namespace HDigital.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Resurse",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Tip = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Nume = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cantitate = table.Column<int>(type: "int", nullable: false),
+                    UnitateDeMasura = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DataAchizitie = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PretAchizitie = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Resurse", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transport",
                 columns: table => new
                 {
@@ -155,6 +174,9 @@ namespace HDigital.Migrations
 
             migrationBuilder.DropTable(
                 name: "drawings");
+
+            migrationBuilder.DropTable(
+                name: "Resurse");
 
             migrationBuilder.DropTable(
                 name: "Transport");

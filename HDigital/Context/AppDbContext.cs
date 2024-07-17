@@ -19,6 +19,8 @@ namespace HDigital.Context
         public DbSet<Transport> Transport { get; set; }
         public DbSet<Utilaje> Utilaje { get; set; }
 
+        public DbSet<Resurse> Resurse { get; set; } 
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +30,7 @@ namespace HDigital.Context
             modelBuilder.Entity<Vehicule>().ToTable("vehicule");
             modelBuilder.Entity<Utilaje>().ToTable("utilaje");
             modelBuilder.Entity<Transport>().ToTable("Transport");
+            modelBuilder.Entity<Resurse>().ToTable("Resurse");
             modelBuilder.Entity<Drawing>()
         .HasOne(d => d.User) 
         .WithMany(u => u.Drawings) 

@@ -92,6 +92,40 @@ namespace HDigital.Migrations
                     b.ToTable("drawings", (string)null);
                 });
 
+            modelBuilder.Entity("HDigital.Models.Resurse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Cantitate")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataAchizitie")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nume")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("PretAchizitie")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Tip")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnitateDeMasura")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Resurse", (string)null);
+                });
+
             modelBuilder.Entity("HDigital.Models.Transport", b =>
                 {
                     b.Property<int>("Id")

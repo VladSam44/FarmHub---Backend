@@ -77,7 +77,6 @@ namespace HDigital.Controllers
             _context.Drawings.Add(drawing);
             await _context.SaveChangesAsync();
 
-
             return CreatedAtAction("GetDrawing", new { id = drawing.Id }, drawing);
         }
 

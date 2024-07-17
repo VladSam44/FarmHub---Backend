@@ -52,11 +52,11 @@ builder.Services.AddAuthentication(x =>
        
     };
 });  //token.parmaterii
-builder.Services.Configure<OpenWeatherMapOptions>(builder.Configuration.GetSection("OpenWeatherMap"));
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

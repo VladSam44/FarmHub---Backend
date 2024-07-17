@@ -3,35 +3,33 @@ using HDigital.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace HDigital.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AngajatiController : ControllerBase
+    public class ResurseController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        private bool AngajatiExists(int id)
+        private bool ResurseExists(int id)
         {
-            return _context.Angajati.Any(e => e.Id == id);
+            return _context.Resurse.Any(e => e.Id == id);
         }
 
-        public AngajatiController(AppDbContext context)
+        public ResurseController(AppDbContext context)
         {
             _context = context;
         }
 
-       
-
         [Authorize]
         [HttpGet("get")]
-        public async Task<ActionResult<IEnumerable<Angajati>>> GetAngajati()
+        public async Task<ActionResult<IEnumerable<Resurse>>> GetResurse()
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
             var userIdClaim = userIdentity.FindFirst("userId");
@@ -40,29 +38,29 @@ namespace HDigital.Controllers
                 return BadRequest("Unable to retrieve user ID.");
             }
 
-            var angajati = await _context.Angajati
+            var resurse = await _context.Resurse
                                         .Where(d => d.UserId == userId)
                                         .ToListAsync();
 
-            return angajati;
+            return resurse;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Angajati>> GetAngajat(int id)
+        public async Task<ActionResult<Resurse>> GetResursa(int id)
         {
-            var angajat = await _context.Angajati.FindAsync(id);
+            var resursa = await _context.Resurse.FindAsync(id);
 
-            if (angajat == null)
+            if (resursa == null)
             {
                 return NotFound();
             }
 
-            return angajat;
+            return resursa;
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<Angajati>> PostAngajati(Angajati angajati)
-        {   
+        public async Task<ActionResult<Resurse>> PostResurse(Resurse resurse)
+        {
             if (User == null)
             {
                 return Unauthorized();
@@ -74,17 +72,17 @@ namespace HDigital.Controllers
                 return Unauthorized("Unauthorized access.");
             }
 
-            angajati.UserId = userId;
+            resurse.UserId = userId;
 
-            _context.Angajati.Add(angajati);
+            _context.Resurse.Add(resurse);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAngajati", new { id = angajati.Id }, angajati);
+            return CreatedAtAction("GetResurse", new { id = resurse.Id }, resurse);
         }
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> PutAngajati([FromBody]Angajati updatedAngajati)
+        public async Task<IActionResult> PutResurse([FromBody] Resurse updatedResurse)
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
             var userIdClaim = userIdentity.FindFirst("userId");
@@ -92,15 +90,17 @@ namespace HDigital.Controllers
             {
                 return Unauthorized("Acces neautorizat");
             }
-            var existingAngajati = await _context.Angajati.FindAsync(updatedAngajati.Id);
-            if (existingAngajati == null || existingAngajati.UserId != userId)
+            var existingResurse = await _context.Resurse.FindAsync(updatedResurse.Id);
+            if (existingResurse == null || existingResurse.UserId != userId)
             {
-                return NotFound("Angajatul nu exista in baza de date/Acces neautorizat");
+                return NotFound("Resursa nu exista in baza de date/Acces neautorizat");
             }
-            existingAngajati.Nume = updatedAngajati.Nume;
-            existingAngajati.Pozitie = updatedAngajati.Pozitie;
-            existingAngajati.Salariu = updatedAngajati.Salariu;
-            existingAngajati.ExpirareContract = updatedAngajati.ExpirareContract;
+            existingResurse.Nume = updatedResurse.Nume;
+            existingResurse.Tip = updatedResurse.Tip;
+            existingResurse.Cantitate = updatedResurse.Cantitate;
+            existingResurse.UnitateDeMasura = updatedResurse.UnitateDeMasura;
+            existingResurse.DataAchizitie = updatedResurse.DataAchizitie;
+            existingResurse.PretAchizitie = updatedResurse.PretAchizitie;
 
             try
             {
@@ -108,7 +108,7 @@ namespace HDigital.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AngajatiExists(updatedAngajati.Id))
+                if (!ResurseExists(updatedResurse.Id))
                 {
                     return NotFound();
                 }
@@ -122,24 +122,24 @@ namespace HDigital.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAngajati(int id)
+        public async Task<IActionResult> DeleteResurse(int id)
         {
             var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
             var userIdClaim = userIdentity.FindFirst("userId");
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId)) 
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
                 return Unauthorized("Acces neautorizat.");
             }
-           var angajati = await _context.Angajati.FindAsync(id);
-           if(angajati == null || angajati.UserId != userId)
+            var resursa = await _context.Resurse.FindAsync(id);
+            if (resursa == null || resursa.UserId != userId)
             {
-                return NotFound("Angajatul nu este in data de baze");
+                return NotFound("Resursa nu este in baza de date");
             }
-           _context.Angajati.Remove(angajati);
+            _context.Resurse.Remove(resursa);
             await _context.SaveChangesAsync();
 
-            return NoContent(); 
-            
+            return NoContent();
+
         }
     }
 }

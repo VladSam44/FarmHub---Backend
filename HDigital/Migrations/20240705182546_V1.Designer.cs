@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDigital.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240527205708_V1")]
+    [Migration("20240705182546_V1")]
     partial class V1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,40 @@ namespace HDigital.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("drawings", (string)null);
+                });
+
+            modelBuilder.Entity("HDigital.Models.Resurse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Cantitate")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataAchizitie")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nume")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("PretAchizitie")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Tip")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnitateDeMasura")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Resurse", (string)null);
                 });
 
             modelBuilder.Entity("HDigital.Models.Transport", b =>
